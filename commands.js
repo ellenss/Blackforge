@@ -1,49 +1,88 @@
-import 'dotenv/config';
-// import { getRPSChoices } from './game.js';
-import { capitalize, InstallGlobalCommands } from './utils.js';
+import "dotenv/config";
+import { getAllColors } from "./colors.js";
+import { InstallGlobalCommands } from "./utils.js";
 
-// // Get the game choices from game.js
-// function createCommandChoices() {
-//   const choices = getRPSChoices();
-//   const commandChoices = [];
-
-//   for (let choice of choices) {
-//     commandChoices.push({
-//       name: capitalize(choice),
-//       value: choice.toLowerCase(),
-//     });
-//   }
-
-//   return commandChoices;
-// }
-
-// Simple test command
-const TEST_COMMAND = {
-  name: 'test',
-  description: 'Basic command',
+const QUEUE_COMMAND = {
+  name: "queue",
+  description: "Join the printing queue",
   type: 1,
-  integration_types: [0, 1],
-  contexts: [0, 1, 2],
+  integration_types: [0],
+  contexts: [0],
 };
 
-// // Command containing options
-// const CHALLENGE_COMMAND = {
-//   name: 'challenge',
-//   description: 'Challenge to a match of rock paper scissors',
-//   options: [
-//     {
-//       type: 3,
-//       name: 'object',
-//       description: 'Pick your object',
-//       required: true,
-//       choices: createCommandChoices(),
-//     },
-//   ],
-//   type: 1,
-//   integration_types: [0, 1],
-//   contexts: [0, 2],
-// };
+const COLOR_COMMAND = {
+  name: "color",
+  description: "Get color status or input a new color",
+  type: 1,
+  integration_types: [0],
+  contexts: [0],
+  options: [
+    {
+      name: "current",
+      description: "Get the current color",
+      type: 1,
+    },
+    {
+      name: "all",
+      description: "Get status of all colors",
+      type: 1,
+    },
+    {
+      name: "set",
+      description: "Set the current color",
+      type: 1,
+      options: [
+        {
+          name: "color",
+          description: "Choose the color",
+          type: 3,
+          required: true,
+          choices: getAllColors(),
+        },
+      ],
+    },
+    {
+      name: "new",
+      description: "Register a new color",
+      type: 1,
+      options: [
+        {
+          name: "color",
+          description: "Input a color name",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "amount",
+          description: "Input amount of spools to add",
+          type: 4,
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "update",
+      description: "Add a new spool of existing color",
+      type: 1,
+      options: [
+        {
+          name: "color",
+          description: "Choose the color",
+          type: 3,
+          required: true,
+          choices: getAllColors(),
+        },
+        {
+          name: "amount",
+          description: "Input amount of spools to add",
+          type: 4,
+          required: false,
+        },
+      ],
+    }
+  ],
+};
 
-const ALL_COMMANDS = [TEST_COMMAND];
+const ALL_COMMANDS = [QUEUE_COMMAND, COLOR_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
