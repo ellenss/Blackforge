@@ -11,15 +11,12 @@ import {
 } from "discord-interactions";
 // import { getRandomEmoji, DiscordRequest } from "./utils.js";
 import { addToQueue } from "./queue.js";
-import {
-  getCurrentColor,
-  getAllColors,
-  setColor,
-  addColor,
-  updateColorAmount,
-} from "./colors.js";
+import * as color from "./colors.js";
 
 const app = express();
+var client = redis.createClient(process.env.REDISCLOUD_URL, {
+  no_ready_check: true,
+});
 const PORT = process.env.PORT || 3000;
 
 /**
@@ -30,7 +27,6 @@ app.post(
   "/interactions",
   verifyKeyMiddleware(process.env.PUBLIC_KEY),
   async function (req, res) {
-    // Interaction id, type and data
     const { type, member, data } = req.body;
 
     /**
@@ -63,7 +59,7 @@ app.post(
         case "color":
           switch (data.options[0].name) {
             case "current":
-              let currentColor = getCurrentColor();
+              let currentColor = color.getCurrentColor(client);
               if (!currentColor) currentColor = "not set";
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -73,7 +69,7 @@ app.post(
                 },
               });
             case "all":
-              let colors = getAllColors();
+              let colors = color.getAllColors(client);
               let colorStatus = colors
                 .map((c) => `- ${c.name}: ${c.amount}`)
                 .join("\n");
@@ -87,7 +83,7 @@ app.post(
               });
             case "set":
               const newColor = data.options[0].options[0].value;
-              setColor(newColor);
+              color.setColor(client.newColor);
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
@@ -99,7 +95,7 @@ app.post(
               const colorName = data.options[0].options[0].value;
               const colorAmount =
                 parseInt(data.options[0].options[1].value) || 1;
-              addColor(colorName, colorAmount);
+              color.addColor(client, colorName, colorAmount);
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
@@ -111,7 +107,7 @@ app.post(
               const addColorName = data.options[0].options[0].value;
               const addColorAmount =
                 parseInt(data.options[0].options[1].value) || 1;
-              updateColorAmount(addColorName, addColorAmount);
+              color.updateColorAmount(client, addColorName, addColorAmount);
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
@@ -132,6 +128,23 @@ app.post(
           console.error(`unknown command: ${name}`);
           return res.status(400).json({ error: "unknown command" });
       }
+    }
+
+    if (interaction.isAutocomplete()) {
+        const focusedOption = interaction.options.getFocused(true);
+        let choices = []; // Your array of possible choices
+
+        // Example: Filter choices based on user input
+        if (focusedOption.name === 'search_term') {
+            choices = color.getAllColors(client).map(c => c.name);
+            const filtered = choices.filter(choice =>
+                choice.toLowerCase().startsWith(focusedOption.value.toLowerCase())
+            );
+            // Respond with up to 25 choices
+            await interaction.respond(
+                filtered.slice(0, 25).map(choice => ({ name: choice, value: choice }))
+            );
+        }
     }
 
     console.error("unknown interaction type", type);

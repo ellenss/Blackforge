@@ -1,9 +1,3 @@
-import redis from "redis";
-
-var client = redis.createClient(process.env.REDISCLOUD_URL, {
-  no_ready_check: true,
-});
-
 export function getResult(p1, p2) {
   let gameResult;
   if (RPSChoices[p1.objectName] && RPSChoices[p1.objectName][p2.objectName]) {
@@ -106,7 +100,7 @@ export function getShuffledOptions() {
   return options.sort(() => Math.random() - 0.5);
 }
 
-export function addToQueue(username) {
+export function addToQueue(client, username) {
   client.rpush("queue", username);
   return client.lrange("queue", 0, -1);
 }

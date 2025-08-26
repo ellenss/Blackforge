@@ -1,5 +1,4 @@
 import "dotenv/config";
-import { getAllColors } from "./colors.js";
 import { InstallGlobalCommands } from "./utils.js";
 
 const QUEUE_COMMAND = {
@@ -37,7 +36,7 @@ const COLOR_COMMAND = {
           description: "Choose the color",
           type: 3,
           required: true,
-          choices: getAllColors(),
+          autocomplete: true,
         },
       ],
     },
@@ -70,7 +69,7 @@ const COLOR_COMMAND = {
           description: "Choose the color",
           type: 3,
           required: true,
-          choices: getAllColors(),
+          autocomplete: true,
         },
         {
           name: "amount",

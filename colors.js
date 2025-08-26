@@ -1,26 +1,20 @@
-import redis from "redis";
-
-var client = redis.createClient(process.env.REDISCLOUD_URL, {
-  no_ready_check: true,
-});
-
-export function getCurrentColor() {
+export function getCurrentColor(client) {
   return client.get("currentColor");
 };
 
-export function getAllColors() {
+export function getAllColors(client) {
     return client.get("colors");
 };
 
-export function setColor(newColor) {
+export function setColor(client, newColor) {
     client.set("currentColor", newColor);
 }
 
-export function addColor(colorName, colorAmount) {
+export function addColor(client, colorName, colorAmount) {
     client.rpush("colors", { name: colorName, amount: colorAmount * 1000 });
 }
 
-export function updateColorAmount(colorName, addColorAmount) {
+export function updateColorAmount(client, colorName, addColorAmount) {
     client.get("colors", (err, colors) => {
         if (err) {
             console.error("Error fetching colors:", err);
