@@ -69,10 +69,13 @@ app.post(
               });
             case "all":
               let colors = color.getAllColors(client);
-              let colorStatus = colors
-                .map((c) => `- ${c.name}: ${c.amount}`)
-                .join("\n");
-              if (!colorStatus) colorStatus = "No colors registered.";
+              let colorStatus = "No colors registered.";
+              if (colors) {
+                colorStatus = colors
+                  .map((c) => `- ${c.name}: ${c.amount}`)
+                  .join("\n");
+              }
+              
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
@@ -93,7 +96,7 @@ app.post(
             case "new":
               const colorName = data.options[0].options[0].value;
               const colorAmount =
-                parseInt(data.options[0].options[1].value) || 1;
+                parseInt(data.options[0].options[1]?.value) || 1;
               color.addColor(client, colorName, colorAmount);
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

@@ -11,7 +11,7 @@ export function setColor(client, newColor) {
 }
 
 export function addColor(client, colorName, colorAmount) {
-    client.rpush("colors", { name: colorName, amount: colorAmount * 1000 });
+    client.RPUSH("colors", { name: colorName, amount: colorAmount * 1000 });
 }
 
 export function updateColorAmount(client, colorName, addColorAmount) {

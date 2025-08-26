@@ -101,6 +101,6 @@ export function getShuffledOptions() {
 }
 
 export function addToQueue(client, username) {
-  client.rpush("queue", username);
-  return client.lrange("queue", 0, -1);
+  client.RPUSH("queue", username);
+  return client.LRANGE("queue", 0, -1);
 }
