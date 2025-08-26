@@ -58,7 +58,7 @@ app.post(
         case "color":
           switch (data.options[0].name) {
             case "current":
-              let currentColor = color.getCurrentColor(client);
+              let currentColor = await color.getCurrentColor(client);
               if (!currentColor) currentColor = "not set";
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -68,7 +68,7 @@ app.post(
                 },
               });
             case "all":
-              let colors = color.getAllColors(client);
+              let colors = await color.getAllColors(client);
               colors = JSON.parse(colors) || [];
               let colorStatus = "No colors registered.";
               if (colors) {
