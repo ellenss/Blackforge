@@ -70,6 +70,13 @@ app.post(
                 },
               });
             case "all":
+              return res.send({
+                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                data: {
+                  flags: InteractionResponseFlags.EPHEMERAL,
+                  content: `Status of all colors: \n test.`,
+                },
+              });
               let colors = color.getAllColors(client);
               let colorStatus = colors
                 .map((c) => `- ${c.name}: ${c.amount}`)
