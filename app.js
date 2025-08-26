@@ -15,7 +15,7 @@ import * as color from "./colors.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-var client = redis.createClient(process.env.REDISCLOUD_URL);
+var client = redis.createClient({ url: process.env.REDISCLOUD_URL });
 await client.connect();
 
 /**
@@ -122,14 +122,10 @@ app.post(
                 },
               });
             default:
-              console.error(
-                `unknown subcommand: ${data.options[0].name}`
-              );
-              return res
-                .status(400)
-                .json({ error: "unknown subcommand" });
+              console.error(`unknown subcommand: ${data.options[0].name}`);
+              return res.status(400).json({ error: "unknown subcommand" });
           }
-        
+
         default:
           console.error(`unknown command: ${name}`);
           return res.status(400).json({ error: "unknown command" });
@@ -137,20 +133,22 @@ app.post(
     }
 
     if (interaction.isAutocomplete()) {
-        const focusedOption = interaction.options.getFocused(true);
-        let choices = []; // Your array of possible choices
+      const focusedOption = interaction.options.getFocused(true);
+      let choices = []; // Your array of possible choices
 
-        // Example: Filter choices based on user input
-        if (focusedOption.name === 'search_term') {
-            choices = color.getAllColors(client).map(c => c.name);
-            const filtered = choices.filter(choice =>
-                choice.toLowerCase().startsWith(focusedOption.value.toLowerCase())
-            );
-            // Respond with up to 25 choices
-            await interaction.respond(
-                filtered.slice(0, 25).map(choice => ({ name: choice, value: choice }))
-            );
-        }
+      // Example: Filter choices based on user input
+      if (focusedOption.name === "search_term") {
+        choices = color.getAllColors(client).map((c) => c.name);
+        const filtered = choices.filter((choice) =>
+          choice.toLowerCase().startsWith(focusedOption.value.toLowerCase())
+        );
+        // Respond with up to 25 choices
+        await interaction.respond(
+          filtered
+            .slice(0, 25)
+            .map((choice) => ({ name: choice, value: choice }))
+        );
+      }
     }
 
     console.error("unknown interaction type", type);
