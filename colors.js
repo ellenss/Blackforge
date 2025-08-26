@@ -1,9 +1,9 @@
-export function getCurrentColor(client) {
-  return client.get("currentColor");
+export async function getCurrentColor(client) {
+  return await client.get("currentColor");
 };
 
-export function getAllColors(client) {
-    return client.get("colors");
+export async function getAllColors(client) {
+    return await client.get("colors");
 };
 
 export function setColor(client, newColor) {
