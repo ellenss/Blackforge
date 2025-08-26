@@ -70,7 +70,7 @@ app.post(
             case "all":
               let colors = await color.getAllColors(client);
               colors = JSON.parse(colors) || [];
-              let colorStatus = "No colors registered.";
+              let colorStatus = "No colors registered";
               if (colors.length > 0) {
                 colorStatus = colors
                   .map((c) => `- ${c.name}: ${c.amount}`)
