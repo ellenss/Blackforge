@@ -71,7 +71,7 @@ app.post(
               let colors = await color.getAllColors(client);
               colors = JSON.parse(colors) || [];
               let colorStatus = "No colors registered.";
-              if (colors) {
+              if (colors.length > 0) {
                 colorStatus = colors
                   .map((c) => `- ${c.name}: ${c.amount}`)
                   .join("\n");
@@ -108,7 +108,7 @@ app.post(
             case "update":
               const addColorName = data.options[0].options[0].value;
               const addColorAmount =
-                parseInt(data.options[0].options[1].value) || 1;
+                parseInt(data.options[0].options[1]?.value) || 1;
               color.updateColorAmount(client, addColorName, addColorAmount);
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -134,7 +134,8 @@ app.post(
 
       // Example: Filter choices based on user input
       if (focusedOption.name === "search_term") {
-        choices = color.getAllColors(client).map((c) => c.name);
+        let colors = await color.getAllColors(client);
+        choices = JSON.parse(colors).map((c) => c.name);
         const filtered = choices.filter((choice) =>
           choice.toLowerCase().startsWith(focusedOption.value.toLowerCase())
         );
