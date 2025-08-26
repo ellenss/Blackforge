@@ -14,10 +14,11 @@ import { addToQueue } from "./queue.js";
 import * as color from "./colors.js";
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 var client = redis.createClient(process.env.REDISCLOUD_URL, {
   no_ready_check: true,
 });
-const PORT = process.env.PORT || 3000;
+await client.connect();
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
