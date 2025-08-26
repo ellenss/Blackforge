@@ -69,13 +69,13 @@ app.post(
               });
             case "all":
               let colors = color.getAllColors(client);
+              colors = JSON.parse(colors) || [];
               let colorStatus = "No colors registered.";
               if (colors) {
                 colorStatus = colors
                   .map((c) => `- ${c.name}: ${c.amount}`)
                   .join("\n");
               }
-              
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
@@ -85,7 +85,7 @@ app.post(
               });
             case "set":
               const newColor = data.options[0].options[0].value;
-              color.setColor(client.newColor);
+              color.setColor(client, newColor);
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
