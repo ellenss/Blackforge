@@ -100,7 +100,7 @@ export function getShuffledOptions() {
   return options.sort(() => Math.random() - 0.5);
 }
 
-export function addToQueue(client, username) {
-  client.RPUSH("queue", username);
-  return client.LRANGE("queue", 0, -1);
+export async function addToQueue(client, username) {
+  await client.RPUSH("queue", username);
+  return await client.LRANGE("queue", 0, -1);
 }

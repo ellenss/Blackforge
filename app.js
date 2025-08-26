@@ -46,7 +46,7 @@ app.post(
       switch (name) {
         case "queue":
           let username = user.username;
-          let queue = addToQueue(username);
+          let queue = await addToQueue(client, username);
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
@@ -69,18 +69,18 @@ app.post(
               });
             case "all":
               let colors = await color.getAllColors(client);
-              let colorStatus = "No colors registered";
+              let colorStatus = "No colors registered.";
               if (colors.length > 0) {
                 colors = colors.map((c) => JSON.parse(c));
                 colorStatus = colors
-                  .map((c) => `- ${c.name}: ${c.amount}`)
+                  .map((c) => `- ${c.name}: ${c.amount}g`)
                   .join("\n");
               }
               return res.send({
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
                   flags: InteractionResponseFlags.EPHEMERAL,
-                  content: `Status of all colors: \n ${colorStatus}.`,
+                  content: `Status of all colors: \n ${colorStatus}`,
                 },
               });
             case "set":
@@ -114,7 +114,9 @@ app.post(
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
                   flags: InteractionResponseFlags.EPHEMERAL,
-                  content: `Added ${addAmount} to ${addColorName}.`,
+                  content: `Added ${
+                    addColorAmount * 1000
+                  }g to ${addColorName}.`,
                 },
               });
             default:
@@ -128,24 +130,23 @@ app.post(
       }
     }
 
-    if (interaction.isAutocomplete()) {
-      const focusedOption = interaction.options.getFocused(true);
-      let choices = []; // Your array of possible choices
-
-      // Example: Filter choices based on user input
-      if (focusedOption.name === "search_term") {
-        let colors = await color.getAllColors(client);
-        choices = JSON.parse(colors).map((c) => c.name);
-        const filtered = choices.filter((choice) =>
-          choice.toLowerCase().startsWith(focusedOption.value.toLowerCase())
-        );
-        // Respond with up to 25 choices
-        await interaction.respond(
-          filtered
-            .slice(0, 25)
-            .map((choice) => ({ name: choice, value: choice }))
-        );
-      }
+    if (type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
+      let colors = await color.getAllColors(client);
+      colors = colors.map((c) => JSON.parse(c));
+      let choices = colors.map((c) => {
+        return { name: c.name, value: c.name };
+      });
+      const filtered = choices.filter((choice) =>
+        choice.name
+          .toLowerCase()
+          .startsWith(data.options[0].options[0].value.toLowerCase())
+      );
+      return res.send({
+        type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
+        data: {
+          choices: filtered.slice(0, 25),
+        },
+      });
     }
 
     console.error("unknown interaction type", type);

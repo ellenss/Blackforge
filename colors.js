@@ -11,6 +11,7 @@ export function setColor(client, newColor) {
 }
 
 export function addColor(client, colorName, colorAmount) {
+  console.log("Adding color:", colorName, "Amount:", colorAmount * 1000);
   client.RPUSH(
     "colors",
     JSON.stringify({ name: colorName, amount: colorAmount * 1000 })
