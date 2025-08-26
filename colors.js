@@ -19,7 +19,7 @@ export function addColor(client, colorName, colorAmount) {
 
 export function updateColorAmount(client, colorName, addColorAmount) {
   client.LRANGE("colors", 0, -1).then((colors) => {
-    let colorList = JSON.parse(colors) || [];
+    let colorList = colors.map((c) => JSON.parse(c));
     let color = colorList.find((c) => c.name === colorName);
     if (color) {
       client.LREM("colors", 0, JSON.stringify(color));
