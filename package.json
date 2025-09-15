@@ -1,0 +1,33 @@
+{
+  "name": "blackforge",
+  "version": "1.0.0",
+  "description": "Discord app for our 3D printer",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo 'Error: no test specified'",
+    "start": "node app.js",
+    "register": "node commands.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ellenss/Blackforge.git"
+  },
+  "keywords": [
+    "3D"
+  ],
+  "author": "Ellen Samdal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ellenss/Blackforge/issues"
+  },
+  "homepage": "https://github.com/ellenss/Blackforge#readme",
+  "dependencies": {
+    "discord-interactions": "^4.3.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "redis": "^5.8.2"
+  }
+}
